@@ -4,9 +4,15 @@
 # Usage: test.sh
 #
 # Examples:
-#   bash scripts/examples/test.sh        # or: yarn test
+#   yarn test                            # or: npm test, or bash scripts/examples/test.sh
 set -euo pipefail
 HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+ROOT=$(cd "$HERE/../.." && pwd)
+
+# The examples use the published helpers: sync them from @overdoser/scripts into each example folder.
+SYNC=$ROOT/node_modules/.bin/overdoser-scripts
+[[ -x $SYNC ]] || { echo "test.sh: @overdoser/scripts is not installed; run yarn install (or npm install) first" >&2; exit 1; }
+for lang in bash node python; do (cd "$HERE" && "$SYNC" sync "$lang/lib" --lang "$lang" --yes --quiet); done
 WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
 pass=0 fail=0

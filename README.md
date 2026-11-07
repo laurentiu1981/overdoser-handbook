@@ -15,8 +15,8 @@ Sections are added one at a time.
 
 - Agents only read what is in the repo they work in, so the short forms in [rules/](rules/README.md) are copied into
   each project's `.claude/rules/` unchanged. Change the handbook, then copy again; never edit a project's copy.
-- Shared code starts as a tested example here, such as the CLI helpers in
-  [scripts/examples](scripts/examples/README.md), and is copied into projects unchanged.
+- Shared code lives in public `@overdoser` npm packages and is copied into projects unchanged, such as the CLI
+  helpers from [@overdoser/scripts](https://www.npmjs.com/package/@overdoser/scripts). The examples here use them.
 
 ## Changing the handbook
 

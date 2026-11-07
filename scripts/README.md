@@ -172,10 +172,22 @@ Before inventing a new name, check this table and the project's other scripts.
 ## Shared helpers
 
 Each language has one small helper that implements this page, so a script only declares its options and its plan:
-[bash/lib/cli.sh](examples/bash/lib/cli.sh), [node/lib/cli.mjs](examples/node/lib/cli.mjs),
-[python/cli.py](examples/python/cli.py). Copy the helper into `scripts/lib/` unchanged. A script whose needs the
-helper does not cover can use its parts (the Node helper exports the parser, help and prompt separately) or do that
-part its own way, as long as the behaviour above stays the same.
+`cli.sh`, `cli.mjs` and `cli.py`, published as [@overdoser/scripts](https://www.npmjs.com/package/@overdoser/scripts).
+A project gets them as copies in `scripts/lib/`, so its scripts also run on a fresh clone or a server without
+`node_modules`:
+
+```bash
+npx @overdoser/scripts sync --lang bash,node     # first time: copy the helpers the project needs
+npx @overdoser/scripts sync                      # later: update the copies already there
+npx @overdoser/scripts sync --check              # CI: exit 1 when a copy is missing, outdated or edited
+```
+
+- Each copy starts with a stamp naming the package version. Never edit a copy: change the package, release it,
+  sync again.
+- Python scripts add `scripts/lib` to `sys.path` before `import cli`; see the
+  [Python example](examples/python/logs_prune.py).
+- A script whose needs the helper does not cover can use its parts (the Node helper exports the parser, help and
+  prompt separately) or do that part its own way, as long as the behaviour above stays the same.
 
 ## Scripts copied into many projects
 

@@ -4,5 +4,8 @@
   "description": "Conventions, patterns and examples for code, scripts, docs, tools and AI agents.",
   "scripts": {
     "test": "bash scripts/examples/test.sh"
+  },
+  "devDependencies": {
+    "@overdoser/scripts": "^0.1.2"
   }
 }

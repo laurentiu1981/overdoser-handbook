@@ -9,3 +9,6 @@ Thumbs.db
 CLAUDE.local.md
 .claude/settings.local.json
 .claude/worktrees
+
+# Helpers synced from @overdoser/scripts by the test run
+scripts/examples/*/lib/

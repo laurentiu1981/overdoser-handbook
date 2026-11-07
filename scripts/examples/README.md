@@ -1,23 +1,22 @@
 # Script examples
 
-Working examples of the [scripts standard](../README.md), one helper per language plus a script of each kind.
-`yarn test` (or `bash scripts/examples/test.sh`) checks all of them: option forms, help, exit codes, plan and approve,
-including the prompt on a real terminal.
+Working examples of the [scripts standard](../README.md), a script of each kind in bash, Node and Python. Their
+helpers come from [@overdoser/scripts](https://www.npmjs.com/package/@overdoser/scripts), the way a project gets them.
+`yarn test` (or `npm test`) syncs the helpers into each `lib/` folder and checks every example: option forms, help,
+exit codes, plan and approve, including the prompt on a real terminal. Run `yarn install` first.
 
 | File | Kind | Shows |
 |---|---|---|
-| [bash/lib/cli.sh](bash/lib/cli.sh) | helper | Options, `--help` from the header, plan and approve |
 | [bash/logs-report.sh](bash/logs-report.sh) | read-only | Runs directly, `--json`, env default |
 | [bash/logs-prune.sh](bash/logs-prune.sh) | changing | Plan, `Apply? [y/N]`, list option, `--dry-run`, `--yes` |
 | [bash/data-reset.sh](bash/data-reset.sh) | destructive | Typed `yes`, a safety check with `--force` |
-| [node/lib/cli.mjs](node/lib/cli.mjs) | helper | Same behaviour; also exports the parser, help and prompt |
 | [node/docs-generate-index.mjs](node/docs-generate-index.mjs) | changing | Writes only when content changes, `--check` for CI |
-| [python/cli.py](python/cli.py) | helper | Standard options and plan on top of `argparse` |
 | [python/logs_prune.py](python/logs_prune.py) | changing | The bash prune example in Python |
 
 ## Using them in a project
 
-1. Copy the helper into `scripts/lib/` (Python: next to the scripts) without changes.
+1. Copy the helpers into `scripts/lib/`: `npx @overdoser/scripts sync --lang bash,node,python` (only the languages
+   the project uses).
 2. Start the script from the example of the same kind: header comment first, then the options, then the plan.
 3. Add a `package.json` script, so people and agents find it:
 
@@ -36,6 +35,8 @@ Arguments pass through, and file paths are relative to the project root: `yarn l
 Each file is named after its script, so `logs:prune` runs `scripts/logs-prune.sh`.
 
 ## Try them
+
+Run `yarn test` once first: it puts the helpers in place.
 
 ```bash
 mkdir -p /tmp/demo/logs && touch -t 202001010000 /tmp/demo/logs/old.log && cd /tmp/demo

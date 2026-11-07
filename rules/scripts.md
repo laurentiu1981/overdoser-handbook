@@ -25,5 +25,7 @@ paths:
   options. Every env setting also has a flag, and the flag wins.
 - Common names: `-v --verbose`, `-q --quiet`, `--json`, `-e --env`, `-t --target`, `--all`, `--keep`, `-o --out`.
 - Exit codes: 0 done or nothing to do, 1 failure, 2 usage error, 3 not applied (no terminal), 130 declined.
-- Bash: `set -euo pipefail` and the shared `scripts/lib/cli.sh`. Node: built-ins only and `scripts/lib/cli.mjs`.
-  Python: `argparse` with `cli.py`. Generators offer `--check` for CI.
+- Bash: `set -euo pipefail` and `scripts/lib/cli.sh`. Node: built-ins only and `scripts/lib/cli.mjs`. Python:
+  `argparse` with `scripts/lib/cli.py`. Generators offer `--check` for CI.
+- The `scripts/lib/` helpers are copies from `@overdoser/scripts`: never edit them; update with
+  `npx @overdoser/scripts sync`, check with `--check`.
