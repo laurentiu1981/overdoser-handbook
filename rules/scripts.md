@@ -15,7 +15,8 @@ paths:
 - File paths given as arguments, inputs and outputs, are relative to the current folder (the project root under yarn),
   never to the script's folder. Only the script's own files come from `CLI_SCRIPT_DIR` / `run.scriptDir`.
 - Three kinds. Read-only commands run directly. Commands that change things print a plan, then ask `Apply? [y/N]`.
-  Destructive ones (restore, reset, drop) want the word `yes` typed.
+  Destructive ones (restore, reset, drop) want the word `yes` typed. Commands that only add new output (a snapshot,
+  an export) and never overwrite or delete run directly, like read-only ones.
 - `-n` / `--dry-run` prints the plan only. `-y` / `--yes` applies without asking. Without a terminal (CI, pipes,
   agents) a changing command never asks: it prints the plan and exits with 3. As an agent, preview with `--dry-run`
   and apply with `--yes` only once the plan is right and the change was asked for.

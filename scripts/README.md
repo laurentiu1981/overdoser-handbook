@@ -59,6 +59,10 @@ the current folder is the project root, so `yarn db:import backups/db.sql` reads
 | Changing | generate, migrate, release, prune | Prints a plan, then asks `Apply? [y/N]` |
 | Destructive | restore, reset, drop, wipe | Prints a plan, then wants the word `yes` typed |
 
+A command that only adds new output, such as a snapshot, an export or a report file, counts as read-only: it never
+overwrites or deletes anything, so it runs directly and prints what it wrote. If it would overwrite an existing file,
+it is a changing command.
+
 ## Plan, then approve
 
 A changing command first works out everything it would do and prints it. If you like the plan, you answer `y` and it
