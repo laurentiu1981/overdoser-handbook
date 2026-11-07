@@ -5,7 +5,7 @@ Copy this file next to your scripts and use it:
     \"\"\"Delete files older than a number of days.
 
     Examples:
-      prune_old_files.py logs --dry-run
+      logs_prune.py logs --dry-run
     \"\"\"
     import cli
     parser = cli.parser(__doc__, kind="change")
@@ -19,6 +19,9 @@ Copy this file next to your scripts and use it:
     ...
     plan.done()
 
+Paths: file arguments are relative to the current folder, which is the project root when run through yarn or npm.
+Never resolve them from the script's folder; SCRIPT_DIR is only for files that belong to the script.
+
 argparse already accepts --name value, --name=value, -n value and -nvalue, and exits with 2 on a usage error.
 normalize() adds -n=value. Exit codes: 0 done, 1 failure, 2 usage error, 3 not applied (no terminal), 130 declined.
 """
@@ -29,6 +32,7 @@ import sys
 import time
 
 KINDS = ("read", "change", "destructive")
+SCRIPT_DIR = os.path.dirname(os.path.realpath(sys.argv[0]))
 
 
 def normalize(argv=None):

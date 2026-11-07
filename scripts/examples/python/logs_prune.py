@@ -2,10 +2,10 @@
 """Delete files older than a number of days. It shows the plan first and asks before applying.
 
 Examples:
-  prune_old_files.py logs                       # plan, then "Apply? [y/N]"
-  prune_old_files.py logs --dry-run             # plan only
-  prune_old_files.py logs -d=30 --yes           # apply without asking
-  prune_old_files.py logs --pattern '*.log' --pattern '*.tmp'
+  logs_prune.py logs                       # plan, then "Apply? [y/N]"
+  logs_prune.py logs --dry-run             # plan only
+  logs_prune.py logs -d=30 --yes           # apply without asking
+  logs_prune.py logs --pattern '*.log' --pattern '*.tmp'
 """
 import fnmatch
 import os
@@ -24,7 +24,7 @@ args = p.parse_args(cli.normalize())
 patterns = [x for v in (args.pattern or ["*"]) for x in v.split(",")]
 
 if not os.path.isdir(args.dir):
-    print(f"prune_old_files.py: not a folder: {args.dir}", file=sys.stderr)
+    print(f"logs_prune.py: not a folder: {args.dir}", file=sys.stderr)
     sys.exit(1)
 
 cutoff = time.time() - args.days * 86400

@@ -6,11 +6,11 @@
 #   #!/usr/bin/env bash
 #   # Delete files older than a number of days.            <- the header comment is the --help text
 #   #
-#   # Usage: prune-old-files.sh [options] <dir>
+#   # Usage: logs-prune.sh [options] <dir>
 #   #
 #   # Examples:
-#   #   prune-old-files.sh logs            # show the plan, then ask
-#   #   prune-old-files.sh logs --yes      # apply without asking
+#   #   logs-prune.sh logs            # show the plan, then ask
+#   #   logs-prune.sh logs --yes      # apply without asking
 #   set -euo pipefail
 #   source "$(dirname "${BASH_SOURCE[0]}")/lib/cli.sh"
 #
@@ -29,12 +29,16 @@
 #   - ENV_VAR, when set, replaces the default; a flag on the command line always wins.
 # Accepted forms: --name value, --name=value, -n value, -n=value, -nvalue, grouped flags (-ny), and -- to end options.
 #
+# Paths: file arguments are relative to the current folder, which is the project root when run through yarn or npm.
+# Never resolve them from the script's folder. CLI_SCRIPT_DIR (absolute) is only for files that belong to the script.
+#
 # Kinds: read runs directly. change and destructive get -n/--dry-run and -y/--yes; cli_apply prints the plan, then
 # asks "Apply? [y/N]" (change) or wants the word "yes" typed (destructive). Without a terminal it never asks: it stops
 # with exit code 3 and says to re-run with --yes. Exit codes: 0 done, 1 failure, 2 usage error, 3 not applied
 # (no terminal), 130 declined.
 
 CLI_NAME=${CLI_NAME:-$(basename "$0")}
+CLI_SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd -P)
 ARGS=()
 PLAN=()
 _CLI_KIND=read

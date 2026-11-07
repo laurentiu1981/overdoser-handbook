@@ -9,7 +9,11 @@ paths:
 <!-- overdoser-handbook rules/scripts.md, version 2026-11-07; copied verbatim, change it in the handbook. -->
 # Scripts and CLIs
 
-- Entry point: a `package.json` script with a `:` namespace (`db:restore`, `docker:release`), even for bash or Python.
+- Entry point: a `package.json` script, even for bash or Python. Name: `<subject>:<action>[:<variant>]` (`db:snapshot`,
+  `docker:release:pull`, `ai:fix:docker`); standard verbs need no subject (`build`, `test`, `e2e`, `lint`, `build:web`).
+  The file is the name with `-`: `scripts/db-snapshot.sh`.
+- File paths given as arguments, inputs and outputs, are relative to the current folder (the project root under yarn),
+  never to the script's folder. Only the script's own files come from `CLI_SCRIPT_DIR` / `run.scriptDir`.
 - Three kinds. Read-only commands run directly. Commands that change things print a plan, then ask `Apply? [y/N]`.
   Destructive ones (restore, reset, drop) want the word `yes` typed.
 - `-n` / `--dry-run` prints the plan only. `-y` / `--yes` applies without asking. Without a terminal (CI, pipes,

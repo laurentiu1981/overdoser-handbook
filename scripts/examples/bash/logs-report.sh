@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # List files older than a number of days. Read-only: it runs directly, there is nothing to approve.
 #
-# Usage: report-old-files.sh [options] [dir]
+# Usage: logs-report.sh [options] [dir]
 #
 # Examples:
-#   report-old-files.sh                       # current folder, files older than 7 days
-#   report-old-files.sh logs --days 30
-#   report-old-files.sh logs -d=30 --json     # one JSON object per line, for other tools
-#   DAYS=14 report-old-files.sh logs          # the env var replaces the default; a flag still wins
+#   logs-report.sh                       # current folder, files older than 7 days
+#   logs-report.sh logs --days 30
+#   logs-report.sh logs -d=30 --json     # one JSON object per line, for other tools
+#   DAYS=14 logs-report.sh logs          # the env var replaces the default; a flag still wins
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/lib/cli.sh"
 

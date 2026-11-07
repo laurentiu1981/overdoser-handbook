@@ -5,10 +5,10 @@
 //   #!/usr/bin/env node
 //   // Generate INDEX.md from the Markdown files in a folder.     <- the header comment is the --help text
 //   //
-//   // Usage: generate-index.mjs [options] [dir]
+//   // Usage: docs-generate-index.mjs [options] [dir]
 //   //
 //   // Examples:
-//   //   generate-index.mjs docs           # show the plan, then ask
+//   //   docs-generate-index.mjs docs           # show the plan, then ask
 //   import { cli } from './lib/cli.mjs';
 //
 //   const run = cli({
@@ -24,6 +24,9 @@
 // Option types: flag (boolean, --no-name turns it off), value (string), list (repeatable or comma-separated; an
 // array).
 // Accepted forms: --name value, --name=value, -n value, -n=value, -nvalue, grouped flags (-ny), and -- to end options.
+// Paths: file arguments are relative to the current folder (process.cwd()), which is the project root when run
+// through yarn or npm. Never resolve them from the script's folder; run.scriptDir is only for the script's own files.
+//
 // Exit codes: 0 done, 1 failure, 2 usage error, 3 not applied (no terminal to ask), 130 declined.
 //
 // The building blocks are exported too (parseArgv, helpText, confirm, CliUsageError), so a script whose needs this
@@ -157,6 +160,7 @@ export function cli({
   kind = 'read', options = {}, args: argSpec = {},
   file = process.argv[1], argv = process.argv.slice(2), env = process.env,
 } = {}) {
+  const scriptDir = path.dirname(path.resolve(file || '.'));
   if (!['read', 'change', 'destructive'].includes(kind)) {
     throw new Error(`cli: kind must be read, change or destructive, not '${kind}'`);
   }
@@ -184,7 +188,7 @@ export function cli({
   let started = Date.now();
   const info = (msg) => { if (!opts.quiet) console.log(msg); };
   return {
-    opts, args, kind, name,
+    opts, args, kind, name, scriptDir,
     info,
     debug: (msg) => { if (opts.verbose) console.error(msg); },
     warn: (msg) => console.error(`${name}: ${msg}`),

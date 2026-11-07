@@ -7,9 +7,49 @@ Short form for agents: [rules/scripts.md](../rules/scripts.md). Working, tested 
 ## Entry point
 
 - Every command a person or agent runs is a `package.json` script, also in projects whose scripts are bash or Python:
-  `yarn db:restore`, `yarn docker:release`. One place to discover commands, and arguments pass straight through.
-- Names use `:` namespaces, verb last: `db:snapshot`, `docker:release:pull`, `docker:tags:prune`, `test:e2e`.
+  `yarn db:restore`, `yarn docker:release`. One place to discover commands, and arguments pass straight through
+  (with npm, after `--`: `npm run db:restore -- --dry-run`).
 - The script file lives in `scripts/`; shared helpers in `scripts/lib/`.
+
+## Names
+
+A name says what it works on, then what it does: `<subject>:<action>`, or `<subject>:<action>:<variant>` when there
+are several ways to do it.
+
+| Name | Subject | Action | Variant |
+|---|---|---|---|
+| `db:snapshot` | db | snapshot | |
+| `pgp:generate` | pgp | generate | |
+| `docker:release` | docker | release | |
+| `docker:release:pull` | docker | release | pull |
+| `ai:run` | ai | run | |
+| `ai:fix:docker` | ai | fix | docker |
+
+- **Standard verbs need no subject.** Commands that act on the whole project keep their usual short names, and take
+  a variant when there are several: `build`, `dev`, `start`, `test`, `e2e`, `lint`, `typecheck`, `format`, `clean`,
+  `build:web`, `dev:api`.
+- **Subject:** a noun for the thing worked on: `db`, `docker`, `prod`, `logs`, `docs`, `user`, `ai`. An environment
+  can be the subject when the command manages that stack: `prod:start`, `prod:logs`.
+- **Action:** a verb, from the common set where one fits: `start`, `stop`, `logs`, `status`, `generate`, `migrate`,
+  `seed`, `snapshot`, `restore`, `export`, `import`, `reset`, `release`, `pull`, `push`, `prune`, `check`, `fix`, `run`.
+- **Variant:** which one, what, or how: `docker:release:pull`, `docker:prune:tags`, `db:seed:demo`.
+- Lower case. A segment of several words uses dashes (`docker:generate-base-image`), but one word reads better.
+- **File names follow the script name,** with `:` turned into `-`: `db:snapshot` runs `scripts/db-snapshot.sh`,
+  `ai:fix:docker` runs `scripts/ai-fix-docker.mjs`. Python files use `_`, so they stay importable: `db_snapshot.py`.
+- Avoid implicit `pre`/`post` hooks (`prerelease`); Yarn 2+ doesn't run them. Chain steps explicitly or inside the
+  script.
+
+## Paths
+
+File paths given as arguments are relative to the current folder, never to the script's folder. Through yarn or npm,
+the current folder is the project root, so `yarn db:import backups/db.sql` reads `<project>/backups/db.sql`.
+
+- **Resolve arguments from the current folder.** Use the path as given, or `path.resolve(arg)` in Node, `realpath` in
+  bash, `Path(arg).resolve()` in Python. Never `path.join(__dirname, arg)` or `$(dirname "$0")/$arg`.
+- **The same holds for outputs:** `--out reports/x.json` writes to `<project>/reports/x.json`, and a default output is
+  shown in `--help` relative to the same folder.
+- **Files that belong to the script** (templates, its own helpers, fixtures it ships with) are found from the script's
+  location: `CLI_SCRIPT_DIR` in bash, `run.scriptDir` in Node, `cli.SCRIPT_DIR` in Python.
 
 ## Three kinds of command
 
@@ -54,11 +94,11 @@ and environment variable. The help can't drift from the code, and reading the fi
 ```text
 Delete files older than a number of days. It changes things, so it shows the plan first and asks before applying.
 
-Usage: prune-old-files.sh [options] <dir>
+Usage: logs-prune.sh [options] <dir>
 
 Examples:
-  prune-old-files.sh logs --dry-run                  # plan only
-  prune-old-files.sh logs -d 30 --pattern '*.log' --pattern '*.tmp'
+  logs-prune.sh logs --dry-run                  # plan only
+  logs-prune.sh logs -d 30 --pattern '*.log' --pattern '*.tmp'
 
 Options:
   -d, --days <value>           Delete files older than this many days. Default: 7. Env: DAYS.

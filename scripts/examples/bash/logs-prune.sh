@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # Delete files older than a number of days. It changes things, so it shows the plan first and asks before applying.
 #
-# Usage: prune-old-files.sh [options] <dir>
+# Usage: logs-prune.sh [options] <dir>
 #
 # Examples:
-#   prune-old-files.sh logs                            # show the plan, then ask "Apply? [y/N]"
-#   prune-old-files.sh logs --dry-run                  # plan only
-#   prune-old-files.sh logs --yes                      # apply without asking (CI, agents)
-#   prune-old-files.sh logs -d 30 --pattern '*.log' --pattern '*.tmp'
-#   prune-old-files.sh logs --pattern='*.log,*.tmp' -ny    # grouped short flags: dry run
+#   logs-prune.sh logs                            # show the plan, then ask "Apply? [y/N]"
+#   logs-prune.sh logs --dry-run                  # plan only
+#   logs-prune.sh logs --yes                      # apply without asking (CI, agents)
+#   logs-prune.sh logs -d 30 --pattern '*.log' --pattern '*.tmp'
+#   logs-prune.sh logs --pattern='*.log,*.tmp' -ny    # grouped short flags: dry run
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/lib/cli.sh"
 

@@ -33,7 +33,7 @@ fixture() {
 }
 cd "$WORK"
 
-for impl in "bash $HERE/bash/prune-old-files.sh" "python3 $HERE/python/prune_old_files.py"; do
+for impl in "bash $HERE/bash/logs-prune.sh" "python3 $HERE/python/logs_prune.py"; do
   read -r -a run <<<"$impl"
   tag=${run[1]##*/}
   fixture
@@ -63,26 +63,26 @@ for impl in "bash $HERE/bash/prune-old-files.sh" "python3 $HERE/python/prune_old
 done
 
 fixture
-check "bash grouped -ny" 0 bash "$HERE/bash/prune-old-files.sh" logs -ny
+check "bash grouped -ny" 0 bash "$HERE/bash/logs-prune.sh" logs -ny
 has "bash grouped -ny" "Dry run: nothing changed."
-check "bash too many args" 2 bash "$HERE/bash/prune-old-files.sh" logs extra
-check "bash no-flag" 0 bash "$HERE/bash/report-old-files.sh" logs --json --no-json
+check "bash too many args" 2 bash "$HERE/bash/logs-prune.sh" logs extra
+check "bash no-flag" 0 bash "$HERE/bash/logs-report.sh" logs --json --no-json
 has "bash no-flag" "file(s) older than 7 days"
-check "bash read-only json" 0 bash "$HERE/bash/report-old-files.sh" logs --json
+check "bash read-only json" 0 bash "$HERE/bash/logs-report.sh" logs --json
 has "bash read-only json" '{"path":"logs/a.log","bytes":0}'
-check "bash read-only has no --yes" 2 bash "$HERE/bash/report-old-files.sh" logs --yes
+check "bash read-only has no --yes" 2 bash "$HERE/bash/logs-report.sh" logs --yes
 
 mkdir -p data && touch data/x data/y && echo '{}' >seed.json
-check "destructive no terminal" 3 bash "$HERE/bash/reset-data.sh" data
-check "destructive outside" 1 bash "$HERE/bash/reset-data.sh" /tmp --yes
+check "destructive no terminal" 3 bash "$HERE/bash/data-reset.sh" data
+check "destructive outside" 1 bash "$HERE/bash/data-reset.sh" /tmp --yes
 has "destructive outside" "add --force"
-check "destructive apply" 0 bash "$HERE/bash/reset-data.sh" data --seed seed.json --yes
+check "destructive apply" 0 bash "$HERE/bash/data-reset.sh" data --seed seed.json --yes
 if [[ $(ls data) == seed.json ]]; then ok; else bad "destructive apply: data is $(ls data)"; fi
 
 mkdir -p docs && printf '# Alpha\n' >docs/a.md && printf '# Beta\n' >docs/b.md
-gen="$HERE/node/generate-index.mjs"
+gen="$HERE/node/docs-generate-index.mjs"
 check "node help" 0 node "$gen" --help
-has "node help" "Default: INDEX.md. Env: INDEX_OUT."
+has "node help" "Default: <dir>/INDEX.md. Env: INDEX_OUT."
 check "node check stale" 1 node "$gen" docs --check
 check "node no terminal" 3 node "$gen" docs
 for form in "-t Docs" "-t=Docs" "-tDocs" "--title=Docs" "--title Docs"; do
@@ -96,16 +96,37 @@ has "node idempotent" "Nothing to do."
 check "node check fresh" 0 node "$gen" docs --check
 check "node unknown" 2 node "$gen" docs -z
 
+# Through a package manager: file arguments resolve from the current folder (the project root), not from the folder
+# the scripts live in.
+if command -v yarn >/dev/null 2>&1; then
+  mkdir -p proj/backups/logs proj/docs
+  printf '{"name":"demo","private":true,"scripts":{"logs:prune":"bash %s","logs:prune:py":"python3 %s",%s}}\n' \
+    "$HERE/bash/logs-prune.sh" "$HERE/python/logs_prune.py" \
+    "\"docs:generate:index\":\"node $HERE/node/docs-generate-index.mjs\"" >proj/package.json
+  touch -t 202001010000 proj/backups/logs/old.log
+  printf '# A\n' >proj/docs/a.md
+  cd proj
+  for s in logs:prune logs:prune:py; do
+    check "yarn $s with a project path" 0 yarn -s "$s" backups/logs -n
+    has "yarn $s with a project path" "delete backups/logs/old.log"
+  done
+  check "yarn output relative to the project" 0 yarn -s docs:generate:index docs --out reports/index.md -y
+  if [[ -f reports/index.md ]]; then ok; else bad "yarn output relative to the project: reports/index.md missing"; fi
+  cd "$WORK"
+else
+  echo "skip: yarn not installed, package-manager tests not run"
+fi
+
 # A real terminal: util-linux `script` gives the command a pty, so the prompt path runs.
 if script -qec true /dev/null >/dev/null 2>&1; then
   fixture
-  printf 'n\n' | script -qec "bash $HERE/bash/prune-old-files.sh logs" /dev/null >"$WORK/out" 2>&1 || true
+  printf 'n\n' | script -qec "bash $HERE/bash/logs-prune.sh logs" /dev/null >"$WORK/out" 2>&1 || true
   has "prompt declined" "Not applied."
   if [[ -f logs/a.log ]]; then ok; else bad "prompt declined: file deleted"; fi
-  printf 'y\n' | script -qec "bash $HERE/bash/prune-old-files.sh logs" /dev/null >"$WORK/out" 2>&1 || true
+  printf 'y\n' | script -qec "bash $HERE/bash/logs-prune.sh logs" /dev/null >"$WORK/out" 2>&1 || true
   has "prompt approved" "Deleted 3 file(s)"
   mkdir -p data && touch data/z
-  printf 'y\n' | script -qec "bash $HERE/bash/reset-data.sh data" /dev/null >"$WORK/out" 2>&1 || true
+  printf 'y\n' | script -qec "bash $HERE/bash/data-reset.sh data" /dev/null >"$WORK/out" 2>&1 || true
   has "destructive wants the word yes" "Not applied."
 else
   echo "skip: no util-linux script command, prompt paths not tested"

@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Empty a data folder and optionally put a seed file back. Destructive: it shows the plan, then wants "yes" typed.
 #
-# Usage: reset-data.sh [options] <dir>
+# Usage: data-reset.sh [options] <dir>
 #
 # Examples:
-#   reset-data.sh data                           # plan, then "Type yes to apply"
-#   reset-data.sh data --seed fixtures/seed.json
-#   reset-data.sh data --yes                     # no prompt (CI); still refuses folders outside this one
-#   reset-data.sh /tmp/scratch --force --yes     # --force overrides that safety check
+#   data-reset.sh data                           # plan, then "Type yes to apply"
+#   data-reset.sh data --seed fixtures/seed.json
+#   data-reset.sh data --yes                     # no prompt (CI); still refuses folders outside this one
+#   data-reset.sh /tmp/scratch --force --yes     # --force overrides that safety check
 set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/lib/cli.sh"
 
