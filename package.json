@@ -1,0 +1,8 @@
+{
+  "name": "overdoser-handbook",
+  "private": true,
+  "description": "Conventions, patterns and examples for code, scripts, docs, tools and AI agents.",
+  "scripts": {
+    "test": "bash scripts/examples/test.sh"
+  }
+}

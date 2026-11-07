@@ -1,0 +1,11 @@
+.idea
+.vscode/*
+!.vscode/extensions.json
+node_modules
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+CLAUDE.local.md
+.claude/settings.local.json
+.claude/worktrees
