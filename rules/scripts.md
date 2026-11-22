@@ -6,7 +6,7 @@ paths:
   - "**/Makefile"
   - "package.json"
 ---
-<!-- overdoser-handbook rules/scripts.md, version 2026-11-07; copied verbatim, change it in the handbook. -->
+<!-- overdoser-handbook rules/scripts.md, version 2026-11-22; copied verbatim, change it in the handbook. -->
 # Scripts and CLIs
 
 - Entry point: a `package.json` script, even for bash or Python. Name: `<subject>:<action>[:<variant>]` (`db:snapshot`,
@@ -25,6 +25,8 @@ paths:
 - Options: `--name value`, `--name=value`, `-n value`, `-n=value`; `--no-flag`; lists repeat or use commas; `--` ends
   options. Every env setting also has a flag, and the flag wins.
 - Common names: `-v --verbose`, `-q --quiet`, `--json`, `-e --env`, `-t --target`, `--all`, `--keep`, `-o --out`.
+- `--target` is what the command applies to: a server, or the projects, folders, files or names it works on.
+  Positional arguments are the same values separated by spaces (`cmd a b` = `cmd --target a,b`).
 - Exit codes: 0 done or nothing to do, 1 failure, 2 usage error, 3 not applied (no terminal), 130 declined.
 - Bash: `set -euo pipefail` and `scripts/lib/cli.sh`. Node: built-ins only and `scripts/lib/cli.mjs`. Python:
   `argparse` with `scripts/lib/cli.py`. Generators offer `--check` for CI.

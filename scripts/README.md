@@ -125,6 +125,9 @@ comment on each. Write the examples people will actually copy.
 
 - Quoting is the shell's job: `--title='My docs'` reaches the script as `--title=My docs`. Nothing to implement.
 - Positional arguments are for the main object only (a folder, a project, a file); everything else is an option.
+- `--target` is that main object as an option: what the command applies to. Positional arguments are the same
+  values separated by spaces, so `yarn docs:check guides api` and `yarn docs:check --target guides,api` select the
+  same two things. A command can take both, and then they add up.
 - Every environment setting also gets a flag, and the flag wins: `KEEP=3` keeps working for CI, `--keep 3` is what
   people type and what `--help` shows.
 - An unknown option is an error (exit 2) with a hint to try `--help`, never silently ignored.
@@ -141,7 +144,7 @@ comment on each. Write the examples people will actually copy.
 | `--quiet` | `-q` | Errors only |
 | `--json` | | Machine-readable output, for read-only commands |
 | `--env` | `-e` | `dev`, `ci` or `prod` |
-| `--target` | `-t` | A server or deployment target |
+| `--target` | `-t` | What the command applies to: a server, or the projects, folders, files or names it works on |
 | `--all` | | Select everything; required when there is no other selection |
 | `--keep` | | How many items to keep when pruning |
 | `--out` | `-o` | Output file or folder |
