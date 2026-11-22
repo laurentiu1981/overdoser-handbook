@@ -20,6 +20,8 @@ paths:
 - `-n` / `--dry-run` prints the plan only. `-y` / `--yes` applies without asking. Without a terminal (CI, pipes,
   agents) a changing command never asks: it prints the plan and exits with 3. As an agent, preview with `--dry-run`
   and apply with `--yes` only once the plan is right and the change was asked for.
+- A command run by a scheduler has a `cron:` twin (`cron:db:snapshot`): the same script with `--yes` and its
+  arguments set in `package.json`, no file of its own. A `cron:` command never asks.
 - `--force` / `-f` only overrides a safety check; it never means "don't ask".
 - `-h` / `--help` prints the header comment (what it does, usage, examples) and the options with their defaults.
 - Options: `--name value`, `--name=value`, `-n value`, `-n=value`; `--no-flag`; lists repeat or use commas; `--` ends

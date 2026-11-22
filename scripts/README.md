@@ -152,6 +152,26 @@ comment on each. Write the examples people will actually copy.
 
 Before inventing a new name, check this table and the project's other scripts.
 
+## Scheduled runs: `cron:`
+
+A command that a scheduler runs (cron, a timer, a scheduled CI job) gets a twin whose name starts with `cron:`,
+followed by the name of the command it runs: `cron:db:snapshot`, `cron:logs:prune`.
+
+```json
+"logs:prune": "bash scripts/logs-prune.sh",
+"cron:logs:prune": "bash scripts/logs-prune.sh logs --yes"
+```
+
+```text
+0 3 * * *  cd /srv/app && yarn -s cron:logs:prune >> logs/cron.log 2>&1
+```
+
+- **A `cron:` command never asks and never waits for input.** Nobody is there to answer.
+- **It has no code of its own.** It is the same script with its answers set in `package.json`: `--yes`, and the
+  arguments a scheduled run needs. No `scripts/cron-*.sh` file, no special case inside the script.
+- **The schedule calls the `cron:` name,** so the crontab line stays short and a forgotten `--yes` cannot happen.
+- Add one only for commands that really run on a schedule.
+
 ## Exit codes
 
 | Code | Meaning |
